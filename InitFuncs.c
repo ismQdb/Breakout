@@ -84,19 +84,6 @@ void initBall(GameObject* gameObject) {
     ball->ballPoints->right = ball->cx + ball->radius;
 }
 
-void respawnBall(GameObject* gameObject) {
-    Ball* ball = gameObject->ball;
-
-    al_rest(1);
-    ball->lives--;
-    ball->livesAsChar--;
-    ball->cx = BALL_START_X;
-    ball->cy = BALL_START_Y;
-    ball->dx = 5;
-    ball->dy = -5;
-    initRect(gameObject);
-}
-
 void initBlocks(GameObject* gameObject) {
     BlockCollection* blockCollection = gameObject->blockCollection;
 
