@@ -118,17 +118,7 @@ int randBetween(int lo, int hi) {
 }
 
 int ballBlockCollision(Ball* ball, Block* block) {
-    if (((ball->cx - ball->radius) >= block->x1) && (ball->cx - ball->radius) <= block->x2)
-        if (((ball->cy - ball->radius) >= block->y1) && (ball->cy - ball->radius) <= block->y2) {
-            //ball->dx *= -1;
-            return 1;
-        }
-
-    if (((ball->cx + ball->radius) >= block->x1) && (ball->cx + ball->radius) <= block->x2)
-        if (((ball->cy + ball->radius) >= block->y1) && (ball->cy + ball->radius) <= block->y2) {
-            //ball->dy *= -1;
-            return 1;
-        }
+    
 
     return 0;
 }
