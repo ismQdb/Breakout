@@ -118,7 +118,20 @@ int randBetween(int lo, int hi) {
 }
 
 int ballBlockCollision(Ball* ball, Block* block) {
-    
+    int* left = &ball->ballPoints->left;
+    int* right = &ball->ballPoints->right;
+    int* top = &ball->ballPoints->top;
+    int* bottom = &ball->ballPoints->bottom;
+
+    if (((*left < block->x2 && *left > block->x1) || (*right > block->x1 && *right < block->x2)) && (ball->cy < block->y2 && ball->cy > block->y1)) {
+        //ball->dx *= -1;
+        return 1;
+    }
+
+    if (((*bottom > block->y1 && *bottom < block->y2) || (*top < block->y2 && *top > block->y1)) && (ball->cx > block->x1 && ball->cx < block->x2)) {
+        //ball->dy *= -1;
+        return 1;
+    }
 
     return 0;
 }
