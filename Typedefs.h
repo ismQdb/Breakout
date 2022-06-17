@@ -15,7 +15,7 @@
 #define BALL_START_Y 530
 
 #define BLOCK_COUNT 20
-#define BLOCK_ROWS 1
+#define BLOCK_ROWS 4
 
 typedef struct Rectangle {
     int x1, x2;
@@ -23,21 +23,14 @@ typedef struct Rectangle {
     int dx;
 } Rectangle;
 
-typedef struct BallPoints {
-    int top;
-    int bottom;
-    int left;
-    int right;
-} BallPoints;
-
 typedef struct Ball {
     int cx;
     int cy;
     int radius;
     int dx;
     int dy;
-    BallPoints* ballPoints;
     unsigned int lives;
+    int isDead;
     int livesAsChar;
     ALLEGRO_COLOR* color;
 } Ball;

@@ -1,4 +1,3 @@
-#include "InitFuncs.h"
 #include "IncludeHeader.h"
 
 void mustInit(bool test, const char* description)
@@ -43,7 +42,6 @@ void InitFunctions(GameObject* gameObject) {
 void initGameObject(GameObject* gameObject) {
     gameObject->rect = (Rectangle*)malloc(sizeof(Rectangle));
     gameObject->ball = (Ball*)malloc(sizeof(Ball));
-    gameObject->ball->ballPoints = (BallPoints*)malloc(sizeof(BallPoints));
     gameObject->blockCollection = (BlockCollection*)malloc(sizeof(BlockCollection));
 
     for (int i = 0; i < BLOCK_COUNT * BLOCK_ROWS; i++)
@@ -64,33 +62,30 @@ void initRect(GameObject* gameObject) {
     rect->y1 = 540;
     rect->x2 = 450;
     rect->y2 = 550;
-    rect->dx = 5;
+    rect->dx = 10;
 }
 
 void initBall(GameObject* gameObject) {
     Ball* ball = gameObject->ball;
 
+    ball->isDead = 1;
     ball->cx = BALL_START_X;
     ball->cy = BALL_START_Y;
     ball->radius = 10;
-    ball->dx = 5;
+    ball->dx = 5 * randMultiplier();
     ball->dy = -5;
     ball->lives = 3;
     ball->livesAsChar = 51;
-
-    ball->ballPoints->bottom = ball->cy + ball->radius;
-    ball->ballPoints->top = ball->cy - ball->radius;
-    ball->ballPoints->left = ball->cx - ball->radius;
-    ball->ballPoints->right = ball->cx + ball->radius;
 }
 
-void initBlocks(GameObject* gameObject) {
+void initBlock1s(GameObject* gameObject) {
     BlockCollection* blockCollection = gameObject->blockCollection;
 
     double blockWidth = 25;
     double blockHeight = 15;
 
     double blankWidth = (800 - BLOCK_COUNT * 25) / (BLOCK_COUNT + 1);
+    double blankHeight = blockWidth / 2;
     double currentXPos = 0;
 
     for (int i = 0; i < BLOCK_COUNT; i++) {
@@ -103,5 +98,37 @@ void initBlocks(GameObject* gameObject) {
         blockCollection->blocks[i]->active = 1;
 
         currentXPos += blockWidth;
+    }
+}
+
+void initBlocks(GameObject* gameObject) {
+    BlockCollection* blockCollection = gameObject->blockCollection;
+
+    double blockWidth = 25;
+    double blockHeight = 15;
+
+    double blankWidth = (800 - BLOCK_COUNT * 25) / (BLOCK_COUNT + 1);
+    double blankHeight = blockHeight / 2;
+
+    double currentXPos = 0;
+    double currentYPos = 100;
+
+    for (int row = 0; row < BLOCK_ROWS; row++) {
+        currentXPos = 0;
+
+        for (int i = 0; i < BLOCK_COUNT; i++) {
+            currentXPos += blankWidth;
+
+            blockCollection->blocks[20 * row + i]->x1 = currentXPos;
+            blockCollection->blocks[20 * row + i]->x2 = currentXPos + blockWidth;
+            blockCollection->blocks[20 * row + i]->y1 = currentYPos;
+            blockCollection->blocks[20 * row + i]->y2 = currentYPos + blockHeight;
+            blockCollection->blocks[20 * row + i]->color = al_map_rgb(255, 255, 255);
+            blockCollection->blocks[20 * row + i]->active = 1;
+
+            currentXPos += blockWidth;
+        }
+
+        currentYPos += blankHeight += blockHeight;
     }
 }

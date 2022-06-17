@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "Typedefs.h"
-#include "FuncDefs.h"
-#include "InitFuncs.h"
 #include "IncludeHeader.h"
 
 void GameLoop(GameObject* gameObject) {
@@ -13,7 +7,6 @@ void GameLoop(GameObject* gameObject) {
     {
         al_wait_for_event(gameObject->eventQueue, gameObject->event);
 
-        int gameStarted = 1;
         al_get_keyboard_state(gameObject->keyboardState);
 
         switch (gameObject->event->type)
@@ -30,7 +23,8 @@ void GameLoop(GameObject* gameObject) {
                         gameObject->rect->x2 += gameObject->rect->dx;
                     }
 
-                moveTheBall(gameObject);
+                if(!gameObject->ball->isDead)
+                    moveTheBall(gameObject);
 
                 if (gameObject->key[ALLEGRO_KEY_ESCAPE])
                     gameObject->done = true;
@@ -61,34 +55,29 @@ void GameLoop(GameObject* gameObject) {
             liveString[7] = gameObject->ball->livesAsChar;
             liveString[8] = '\0';
 
-            if (gameStarted) {
+            gameObject->ball->isDead = 0;
 
-                if (gameObject->ball->lives == 0) {
-                    al_rest(2);
+            if (gameObject->ball->lives == 0) {
+                al_rest(2);
 
-                    al_clear_to_color(al_map_rgb(0, 0, 0));
-                    al_draw_text(gameObject->font, al_map_rgb(255, 255, 255),
-                        SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT / 2, 0, "Game over.");
-                    al_flip_display();
-                    al_rest(5);
-                    gameObject->done = 1;
-                }
-                else {
-                    al_clear_to_color(al_map_rgb(0, 0, 0));
-                    drawBlocks(gameObject);
-                    al_draw_filled_rectangle(gameObject->rect->x1, gameObject->rect->y1, gameObject->rect->x2, gameObject->rect->y2, al_map_rgba_f(1, 1, 1, 0.5));
-                    al_draw_filled_circle(gameObject->ball->cx, gameObject->ball->cy, gameObject->ball->radius, al_map_rgba_f(1, 1, 1, 0));
-                    al_draw_text(gameObject->font, al_map_rgb(255, 255, 255), 0, 0, 0, liveString);
-                    al_flip_display();
-                }
-                gameObject->redraw = false;
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_draw_text(gameObject->font, al_map_rgb(255, 255, 255),
+                    SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT / 2, 0, "Game over.");
+                al_flip_display();
+                al_rest(5);
+                gameObject->done = 1;
             }
             else {
                 al_clear_to_color(al_map_rgb(0, 0, 0));
-                al_draw_text(gameObject->font, al_map_rgb(255, 255, 255),
-                    SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2, 0, "Press space to start.");
+                drawBlocks(gameObject);
+                al_draw_filled_rectangle(gameObject->rect->x1, gameObject->rect->y1, gameObject->rect->x2, gameObject->rect->y2, al_map_rgba_f(1, 1, 1, 0.5));
+                al_draw_filled_circle(gameObject->ball->cx, gameObject->ball->cy, gameObject->ball->radius, al_map_rgba_f(1, 1, 1, 0));
+                al_draw_text(gameObject->font, al_map_rgb(255, 255, 255), 0, 0, 0, liveString);
                 al_flip_display();
             }
+
+            gameObject->redraw = false;
+
         }
     }
 }
@@ -109,31 +98,50 @@ void drawBlocks(GameObject* gameObject) {
 }
 
 int randBetween(int lo, int hi) {
-    int n = lo + (rand() % (hi - lo));
+    return lo + (rand() % (hi - lo));
+}
 
-    if (n == 0)
-        randBetween(lo, hi);
-    else
-        return n;
+int randMultiplier() {
+    int arr[2];
+    arr[0] = 1;
+    arr[1] = -1;
+
+    srand(time(0));
+    return arr[rand() % 2];
 }
 
 int ballBlockCollision(Ball* ball, Block* block) {
-    int* left = &ball->ballPoints->left;
-    int* right = &ball->ballPoints->right;
-    int* top = &ball->ballPoints->top;
-    int* bottom = &ball->ballPoints->bottom;
+    int returnResult = 0;
 
-    if (((*left < block->x2 && *left > block->x1) || (*right > block->x1 && *right < block->x2)) && (ball->cy < block->y2 && ball->cy > block->y1)) {
-        //ball->dx *= -1;
-        return 1;
-    }
+    if (((ball->cx - ball->radius) >= block->x1) && (ball->cx - ball->radius) <= block->x2)
+        if ((ball->cy >= block->y1) && ball->cy <= block->y2)
+            if (block->active) {
+                ball->dx *= -1;
+                returnResult = 1;
+            }
 
-    if (((*bottom > block->y1 && *bottom < block->y2) || (*top < block->y2 && *top > block->y1)) && (ball->cx > block->x1 && ball->cx < block->x2)) {
-        //ball->dy *= -1;
-        return 1;
-    }
+    if (((ball->cx + ball->radius) >= block->x1) && (ball->cx + ball->radius) <= block->x2)
+        if ((ball->cy >= block->y1) && ball->cy <= block->y2)
+            if (block->active) {
+                ball->dx *= -1;
+                returnResult = 1;
+            }
 
-    return 0;
+    if(((ball->cy - ball->radius) >= block->y1) && (ball->cy - ball->radius) <= block->y2)
+        if (ball->cx >= block->x1 && ball->cx <= block->x2) 
+            if(block->active){
+                ball->dy *= -1;
+                returnResult = 1;
+            }
+
+    if (((ball->cy + ball->radius) >= block->y1) && (ball->cy + ball->radius) <= block->y2)
+        if (ball->cx >= block->x1 && ball->cx <= block->x2) 
+            if(block->active){
+                ball->dy *= -1;
+                returnResult = 1;
+            }
+
+    return returnResult;
 }
 
 void blocksRemoval(GameObject* gameObject) {
@@ -169,7 +177,7 @@ void moveTheBall(GameObject* gameObject) {
         ball->dx *= -1;
 
     if ((ball->cx + ball->radius) > SCREEN_WIDTH) {
-        ball->cx -= (ball->cx - SCREEN_WIDTH + ball->radius);
+        ball->cx -= ((ball->cx - SCREEN_WIDTH + ball->radius));
         ball->dx *= -1;
     }
 
@@ -191,11 +199,12 @@ void respawnBall(GameObject* gameObject) {
     Ball* ball = gameObject->ball;
 
     al_rest(1);
+    ball->isDead = 1;
     ball->lives--;
     ball->livesAsChar--;
     ball->cx = BALL_START_X;
     ball->cy = BALL_START_Y;
-    ball->dx = 5;
+    ball->dx = 5 * randMultiplier();
     ball->dy = -5;
     initRect(gameObject);
 }

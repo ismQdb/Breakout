@@ -1,6 +1,4 @@
 #include "IncludeHeader.h"
-#include "FuncDefs.h"
-#include "InitFuncs.h"
 
 int main()
 {

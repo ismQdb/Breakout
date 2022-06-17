@@ -12,5 +12,7 @@
 #include <allegro5/allegro_image.h>
 
 #include "Typedefs.h"
+#include "FuncDefs.h"
+#include "InitFuncs.h"
 
 #endif // !IncludeHeader
