@@ -1,5 +1,5 @@
-#ifndef InitFuncs
-#define InitFuncs
+#ifndef INITFUNCS_H
+#define INITFUNCS_H
 
 #include "Typedefs.h"
 #include "IncludeHeader.h"

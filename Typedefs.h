@@ -1,5 +1,5 @@
-#ifndef Typedefs
-#define Typedefs
+#ifndef TYPEDEFS_H
+#define TYPEDEFS_H
 
 #include "IncludeHeader.h"
 

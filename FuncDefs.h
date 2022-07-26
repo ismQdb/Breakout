@@ -1,5 +1,5 @@
-#ifndef FuncDefs
-#define FuncDefs
+#ifndef FUNCDEFS_H
+#define FUNCDEFS_H
 
 void GameLoop(GameObject*);
 void GameLoop(GameObject* gameObject);
