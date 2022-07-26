@@ -45,7 +45,7 @@ typedef struct Block {
 } Block;
 
 typedef struct BlockCollection {
-    Block* blocks[BLOCK_COUNT*BLOCK_ROWS];
+    Block* blocks[BLOCK_ROWS][BLOCK_COUNT];
 } BlockCollection;
 
 typedef struct GameObject {

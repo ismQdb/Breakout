@@ -44,8 +44,9 @@ void initGameObject(GameObject* gameObject) {
     gameObject->ball = (Ball*)malloc(sizeof(Ball));
     gameObject->blockCollection = (BlockCollection*)malloc(sizeof(BlockCollection));
 
-    for (int i = 0; i < BLOCK_COUNT * BLOCK_ROWS; i++)
-        gameObject->blockCollection->blocks[i] = (Block*)malloc(sizeof(Block));
+    for (unsigned row = 0; row < BLOCK_ROWS; row++)
+        for (unsigned column = 0; column < BLOCK_COUNT; column++)
+            gameObject->blockCollection->blocks[row][column] = (Block*)malloc(sizeof(Block));
 
     gameObject->timer = (ALLEGRO_TIMER*)malloc(sizeof(ALLEGRO_TIMER*));
     gameObject->eventQueue = (ALLEGRO_EVENT_QUEUE*)malloc(sizeof(ALLEGRO_EVENT_QUEUE*));
@@ -78,29 +79,6 @@ void initBall(GameObject* gameObject) {
     ball->livesAsChar = 51;
 }
 
-void initBlock1s(GameObject* gameObject) {
-    BlockCollection* blockCollection = gameObject->blockCollection;
-
-    double blockWidth = 25;
-    double blockHeight = 15;
-
-    double blankWidth = (800 - BLOCK_COUNT * 25) / (BLOCK_COUNT + 1);
-    double blankHeight = blockWidth / 2;
-    double currentXPos = 0;
-
-    for (int i = 0; i < BLOCK_COUNT; i++) {
-        currentXPos += blankWidth;
-        blockCollection->blocks[i]->x1 = currentXPos;
-        blockCollection->blocks[i]->x2 = currentXPos + blockWidth;
-        blockCollection->blocks[i]->y1 = 100;
-        blockCollection->blocks[i]->y2 = 100 + blockHeight;
-        blockCollection->blocks[i]->color = al_map_rgb(255, 255, 255);
-        blockCollection->blocks[i]->active = 1;
-
-        currentXPos += blockWidth;
-    }
-}
-
 void initBlocks(GameObject* gameObject) {
     BlockCollection* blockCollection = gameObject->blockCollection;
 
@@ -115,20 +93,19 @@ void initBlocks(GameObject* gameObject) {
 
     for (int row = 0; row < BLOCK_ROWS; row++) {
         currentXPos = 0;
+        currentXPos += blankWidth;
 
-        for (int i = 0; i < BLOCK_COUNT; i++) {
-            currentXPos += blankWidth;
+        for (int column = 0; column < BLOCK_COUNT; column++) {
+            blockCollection->blocks[row][column]->x1 = currentXPos;
+            blockCollection->blocks[row][column]->x2 = currentXPos + blockWidth;
+            blockCollection->blocks[row][column]->y1 = currentYPos;
+            blockCollection->blocks[row][column]->y2 = currentYPos + blockHeight;
+            blockCollection->blocks[row][column]->color = al_map_rgb(255, 255, 255);
+            blockCollection->blocks[row][column]->active = 1;           
 
-            blockCollection->blocks[20 * row + i]->x1 = currentXPos;
-            blockCollection->blocks[20 * row + i]->x2 = currentXPos + blockWidth;
-            blockCollection->blocks[20 * row + i]->y1 = currentYPos;
-            blockCollection->blocks[20 * row + i]->y2 = currentYPos + blockHeight;
-            blockCollection->blocks[20 * row + i]->color = al_map_rgb(255, 255, 255);
-            blockCollection->blocks[20 * row + i]->active = 1;
-
-            currentXPos += blockWidth;
+            currentYPos += blankHeight += blockHeight;
         }
 
-        currentYPos += blankHeight += blockHeight;
+        currentXPos += blockWidth;
     }
 }

@@ -86,15 +86,16 @@ void drawBlocks(GameObject* gameObject) {
     BlockCollection* blockCollection = gameObject->blockCollection;
     int numOfBlocks = BLOCK_COUNT;
 
-    for (int i = 0; i < numOfBlocks; i++)
-        if (blockCollection->blocks[i]->active)
-            al_draw_filled_rectangle(
-                blockCollection->blocks[i]->x1,
-                blockCollection->blocks[i]->y1,
-                blockCollection->blocks[i]->x2,
-                blockCollection->blocks[i]->y2,
-                blockCollection->blocks[i]->color
-            );
+    for(unsigned row = 0; row < BLOCK_ROWS; row++)
+        for (unsigned column = 0; column < BLOCK_COUNT; column)
+            if (blockCollection->blocks[row][column]->active)
+                al_draw_filled_rectangle(
+                    blockCollection->blocks[row][column]->x1,
+                    blockCollection->blocks[row][column]->y1,
+                    blockCollection->blocks[row][column]->x2,
+                    blockCollection->blocks[row][column]->y2,
+                    blockCollection->blocks[row][column]->color
+                );
 }
 
 int randBetween(int lo, int hi) {
@@ -148,9 +149,10 @@ void blocksRemoval(GameObject* gameObject) {
     Ball* ball = gameObject->ball;
     BlockCollection* blockCollection = gameObject->blockCollection;
 
-    for (int i = 0; i < BLOCK_COUNT; i++)
-        if (ballBlockCollision(gameObject->ball, gameObject->blockCollection->blocks[i]))
-            blockCollection->blocks[i]->active = 0;
+    for (unsigned row = 0; row < BLOCK_ROWS; row++)
+        for (unsigned column = 0; column < BLOCK_COUNT; column)
+            if (ballBlockCollision(gameObject->ball, gameObject->blockCollection->blocks[row][column]))
+                blockCollection->blocks[row][column]->active = 0;
 
 }
 
