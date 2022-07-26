@@ -1,5 +1,5 @@
-#ifndef IncludeHeader
-#define IncludeHeader
+#ifndef INCLUDEHEADER_H
+#define INCLUDEHEADER_H
 
 #include <stdio.h>
 #include <stdlib.h>
