@@ -84,7 +84,6 @@ void GameLoop(GameObject* gameObject) {
 
 void drawBlocks(GameObject* gameObject) {
     BlockCollection* blockCollection = gameObject->blockCollection;
-    int numOfBlocks = BLOCK_COUNT;
 
     for(unsigned row = 0; row < BLOCK_ROWS; row++)
         for (unsigned column = 0; column < BLOCK_COUNT; column)
